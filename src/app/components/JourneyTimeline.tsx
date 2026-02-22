@@ -149,6 +149,7 @@ export function JourneyTimeline({ nodes, animate = true }: JourneyTimelineProps)
         <Accordion type="single" collapsible className="w-full">
           {nodes.map((node, i) => {
             const Icon = iconMap[node.type];
+            const isVisible = i < visibleNodes;
             const isCompleted = node.status === "completed";
             const isActive = node.status === "active" || node.status === "current";
 
