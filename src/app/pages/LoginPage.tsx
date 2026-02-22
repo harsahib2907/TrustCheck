@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ScanLine, Zap, Factory, Truck, Store, Package } from "lucide-react";
+import { ScanLine, Zap, Factory, Truck, Store, Package, User, ShieldCheck, ShieldAlert } from "lucide-react";
 import { TCButton } from "../components/TCButton";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginWithGoogle } from "../lib/api";
@@ -17,6 +17,11 @@ const DEMO_ROLES = [
   { value: "supplier",     label: "Supplier",     icon: Package,  path: "/dashboard/supplier"     },
   { value: "distributor",  label: "Distributor",  icon: Truck,    path: "/dashboard/distributor"  },
   { value: "retailer",     label: "Retailer",     icon: Store,    path: "/dashboard/retailer"     },
+];
+
+const DEMO_PASSPORTS = [
+  { id: "verified-olive-oil",  label: "Verified Product",    description: "Trust Score 96", icon: ShieldCheck, borderAlpha: "rgba(0,255,148,0.15)",  bgAlpha: "rgba(0,255,148,0.04)",  colorAlpha: "rgba(0,255,148,0.6)"  },
+  { id: "counterfeit-handbag", label: "Counterfeit Product", description: "Trust Score 12", icon: ShieldAlert, borderAlpha: "rgba(255,51,51,0.15)", bgAlpha: "rgba(255,51,51,0.04)", colorAlpha: "rgba(255,51,51,0.6)" },
 ];
 
 export function LoginPage() {
@@ -193,6 +198,7 @@ export function LoginPage() {
             backgroundColor: "rgba(255, 195, 0, 0.02)",
           }}
         >
+          {/* Header */}
           <div
             className="flex items-center gap-2 px-4 py-3"
             style={{ borderBottom: "1px solid rgba(255, 195, 0, 0.12)" }}
@@ -205,29 +211,72 @@ export function LoginPage() {
               Demo Mode — skip login
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: "rgba(255, 195, 0, 0.06)" }}>
-            {DEMO_ROLES.map((d) => {
-              const Icon = d.icon;
-              return (
-                <button
-                  key={d.value}
-                  onClick={() => handleDemoLogin(d.value, d.path)}
-                  className="flex items-center gap-3 px-4 py-3 transition-colors duration-150 cursor-pointer text-left"
-                  style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-secondary)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 195, 0, 0.04)";
-                    e.currentTarget.style.color = "rgba(255, 195, 0, 0.8)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--bg-surface)";
-                    e.currentTarget.style.color = "var(--text-secondary)";
-                  }}
-                >
-                  <Icon size={14} />
-                  <span className="font-mono-ibm" style={{ fontSize: "12px" }}>{d.label}</span>
-                </button>
-              );
-            })}
+
+          {/* Consumer passport options */}
+          <div style={{ borderBottom: "1px solid rgba(255, 195, 0, 0.1)" }}>
+            <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+              <User size={11} style={{ color: "rgba(255, 195, 0, 0.4)" }} />
+              <span className="font-mono-ibm uppercase tracking-[0.1em]" style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.4)" }}>
+                Customer — Product Passport
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 px-2 pb-2">
+              {DEMO_PASSPORTS.map((p) => {
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(`/passport/${p.id}`)}
+                    className="flex items-center gap-3 px-3 py-2 rounded-[3px] transition-colors duration-150 cursor-pointer text-left w-full"
+                    style={{ border: `1px solid ${p.borderAlpha}`, backgroundColor: p.bgAlpha }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    <Icon size={14} style={{ color: p.colorAlpha, flexShrink: 0 }} />
+                    <span className="font-syne" style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                      {p.label}
+                    </span>
+                    <span className="font-mono-ibm ml-auto" style={{ fontSize: "10px", color: "var(--text-dim)" }}>
+                      {p.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Partner dashboard options */}
+          <div>
+            <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+              <Package size={11} style={{ color: "rgba(255, 195, 0, 0.4)" }} />
+              <span className="font-mono-ibm uppercase tracking-[0.1em]" style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.4)" }}>
+                Partner Dashboards
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: "rgba(255, 195, 0, 0.06)" }}>
+              {DEMO_ROLES.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <button
+                    key={d.value}
+                    onClick={() => handleDemoLogin(d.value, d.path)}
+                    className="flex items-center gap-3 px-4 py-3 transition-colors duration-150 cursor-pointer text-left"
+                    style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 195, 0, 0.04)";
+                      e.currentTarget.style.color = "rgba(255, 195, 0, 0.8)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--bg-surface)";
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                    }}
+                  >
+                    <Icon size={14} />
+                    <span className="font-mono-ibm" style={{ fontSize: "12px" }}>{d.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
