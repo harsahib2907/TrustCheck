@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "https://5b48-2a09-bac5-3f15-1aaa-00-2a8-4d.ngrok-free.app";
 
 function getToken(): string | null {
   return localStorage.getItem("access_token");
@@ -232,4 +232,5 @@ export async function scanAsSupplier(
     `/token/supplier?weight=${weight}&lat=${lat}&lon=${lon}`,
     { method: "POST", body: JSON.stringify(qr) }
   );
+
 }
