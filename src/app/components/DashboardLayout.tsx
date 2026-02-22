@@ -12,6 +12,8 @@ import {
   LayoutDashboard,
   Zap,
   ChevronDown,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -145,16 +147,35 @@ export function DashboardLayout({ role, children }: DashboardLayoutProps) {
                   );
                 })}
                 <div style={{ borderTop: "1px solid var(--tc-border)" }}>
+                  <div className="px-4 pt-2 pb-1">
+                    <span className="font-mono-ibm uppercase tracking-[0.1em]" style={{ fontSize: "9px", color: "var(--text-dim)" }}>
+                      Customer View
+                    </span>
+                  </div>
+                  {[
+                    { id: "verified-olive-oil",  label: "Verified Product",    Icon: ShieldCheck, color: "rgba(0,255,148,0.6)"  },
+                    { id: "counterfeit-handbag", label: "Counterfeit Product", Icon: ShieldAlert, color: "rgba(255,51,51,0.6)" },
+                  ].map(({ id, label, Icon, color }) => (
+                    <button
+                      key={id}
+                      onClick={() => { setSwitcherOpen(false); navigate(`/passport/${id}`); }}
+                      className="w-full flex items-center gap-3 px-4 py-2 transition-colors duration-100 cursor-pointer text-left"
+                      style={{ color: "var(--text-secondary)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(255,195,0,0.05)"; e.currentTarget.style.color = color; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--text-secondary)"; }}
+                    >
+                      <Icon size={13} />
+                      <span className="font-mono-ibm" style={{ fontSize: "12px" }}>{label}</span>
+                    </button>
+                  ))}
+                </div>
+                <div style={{ borderTop: "1px solid var(--tc-border)" }}>
                   <button
                     onClick={() => { setSwitcherOpen(false); navigate("/"); }}
                     className="w-full flex items-center gap-3 px-4 py-3 transition-colors duration-100 cursor-pointer text-left"
                     style={{ color: "var(--text-dim)" }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--accent-cyan)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--text-dim)";
-                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "var(--accent-cyan)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-dim)"; }}
                   >
                     <ScanLine size={13} />
                     <span className="font-mono-ibm" style={{ fontSize: "12px" }}>Back to Scanner</span>
