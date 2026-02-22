@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { ScanLine, LogIn, Factory, Truck, Store, Package, ChevronRight, Zap } from "lucide-react";
+import { ScanLine, LogIn, Factory, Truck, Store, Package, ChevronRight, Zap, User, ShieldCheck, ShieldAlert } from "lucide-react";
 import { QRScannerViewfinder } from "../components/QRScannerViewfinder";
 
 const DEMO_DASHBOARDS = [
@@ -8,6 +8,29 @@ const DEMO_DASHBOARDS = [
   { role: "supplier",     label: "Supplier",     icon: Package,  path: "/dashboard/supplier",     description: "Raw material lots"      },
   { role: "distributor",  label: "Distributor",  icon: Truck,    path: "/dashboard/distributor",  description: "Carton scan & custody"  },
   { role: "retailer",     label: "Retailer",     icon: Store,    path: "/dashboard/retailer",     description: "Receipt & sale tracking"},
+];
+
+const DEMO_PASSPORTS = [
+  {
+    id: "verified-olive-oil",
+    label: "Verified Product",
+    description: "Trust Score 96 — authentic",
+    icon: ShieldCheck,
+    color: "var(--trust-green)",
+    colorAlpha: "rgba(0, 255, 148, 0.55)",
+    bgAlpha: "rgba(0, 255, 148, 0.04)",
+    borderAlpha: "rgba(0, 255, 148, 0.15)",
+  },
+  {
+    id: "counterfeit-handbag",
+    label: "Counterfeit Product",
+    description: "Trust Score 12 — flagged",
+    icon: ShieldAlert,
+    color: "var(--trust-red)",
+    colorAlpha: "rgba(255, 51, 51, 0.55)",
+    bgAlpha: "rgba(255, 51, 51, 0.04)",
+    borderAlpha: "rgba(255, 51, 51, 0.15)",
+  },
 ];
 
 export function ScanPage() {
@@ -129,7 +152,7 @@ const handleScan = useCallback((data: string) => {
         </div>
       </header>
 
-      {/* Demo Dashboard Panel */}
+      {/* Demo Panel */}
       {demoOpen && (
         <div
           className="mx-6 mb-2 rounded-[4px] overflow-hidden"
@@ -138,6 +161,7 @@ const handleScan = useCallback((data: string) => {
             backgroundColor: "rgba(255, 195, 0, 0.02)",
           }}
         >
+          {/* Panel header */}
           <div
             className="flex items-center gap-2 px-4 py-3"
             style={{ borderBottom: "1px solid rgba(255, 195, 0, 0.12)" }}
@@ -147,34 +171,80 @@ const handleScan = useCallback((data: string) => {
               className="font-mono-ibm uppercase tracking-[0.12em]"
               style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.6)" }}
             >
-              Demo Mode — jump to any partner dashboard
+              Demo Mode — jump to any view without logging in
             </span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: "rgba(255, 195, 0, 0.06)" }}>
-            {DEMO_DASHBOARDS.map((d) => {
-              const Icon = d.icon;
-              return (
-                <button
-                  key={d.role}
-                  onClick={() => handleDemoNavigate(d.path, d.role)}
-                  className="flex flex-col items-start gap-1 px-4 py-4 transition-colors duration-150 cursor-pointer group text-left"
-                  style={{ backgroundColor: "var(--bg-base)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 195, 0, 0.04)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--bg-base)"; }}
-                >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <Icon size={16} style={{ color: "rgba(255, 195, 0, 0.55)" }} />
-                    <ChevronRight size={12} style={{ color: "rgba(255, 195, 0, 0.25)" }} />
-                  </div>
-                  <span className="font-syne" style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>
-                    {d.label}
-                  </span>
-                  <span className="font-mono-ibm" style={{ fontSize: "11px", color: "var(--text-dim)" }}>
-                    {d.description}
-                  </span>
-                </button>
-              );
-            })}
+
+          {/* Consumer passports row */}
+          <div style={{ borderBottom: "1px solid rgba(255, 195, 0, 0.1)" }}>
+            <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+              <User size={11} style={{ color: "rgba(255, 195, 0, 0.4)" }} />
+              <span className="font-mono-ibm uppercase tracking-[0.1em]" style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.4)" }}>
+                Customer View — Product Passport
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-px pb-1 px-1" style={{ backgroundColor: "transparent" }}>
+              {DEMO_PASSPORTS.map((p) => {
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(`/passport/${p.id}`)}
+                    className="flex items-center gap-3 px-4 py-3 mx-1 mb-1 rounded-[3px] transition-colors duration-150 cursor-pointer text-left"
+                    style={{ border: `1px solid ${p.borderAlpha}`, backgroundColor: p.bgAlpha }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.8"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+                  >
+                    <Icon size={15} style={{ color: p.colorAlpha, flexShrink: 0 }} />
+                    <div>
+                      <span className="font-syne block" style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-primary)" }}>
+                        {p.label}
+                      </span>
+                      <span className="font-mono-ibm" style={{ fontSize: "10px", color: "var(--text-dim)" }}>
+                        {p.description}
+                      </span>
+                    </div>
+                    <ChevronRight size={11} style={{ color: "var(--text-dim)", marginLeft: "auto", flexShrink: 0 }} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Partner dashboards grid */}
+          <div>
+            <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+              <Package size={11} style={{ color: "rgba(255, 195, 0, 0.4)" }} />
+              <span className="font-mono-ibm uppercase tracking-[0.1em]" style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.4)" }}>
+                Partner Dashboards
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{ backgroundColor: "rgba(255, 195, 0, 0.06)" }}>
+              {DEMO_DASHBOARDS.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <button
+                    key={d.role}
+                    onClick={() => handleDemoNavigate(d.path, d.role)}
+                    className="flex flex-col items-start gap-1 px-4 py-4 transition-colors duration-150 cursor-pointer text-left"
+                    style={{ backgroundColor: "var(--bg-base)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 195, 0, 0.04)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--bg-base)"; }}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <Icon size={16} style={{ color: "rgba(255, 195, 0, 0.55)" }} />
+                      <ChevronRight size={12} style={{ color: "rgba(255, 195, 0, 0.25)" }} />
+                    </div>
+                    <span className="font-syne" style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>
+                      {d.label}
+                    </span>
+                    <span className="font-mono-ibm" style={{ fontSize: "11px", color: "var(--text-dim)" }}>
+                      {d.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
