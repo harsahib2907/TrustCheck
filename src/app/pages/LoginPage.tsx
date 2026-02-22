@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ScanLine } from "lucide-react";
+import { ScanLine, Zap, Factory, Truck, Store, Package } from "lucide-react";
 import { TCButton } from "../components/TCButton";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginWithGoogle } from "../lib/api";
@@ -10,6 +10,13 @@ const ROLES = [
   { value: "distributor", label: "Distributor"  },
   { value: "retailer",    label: "Retailer"     },
   { value: "supplier",    label: "Supplier"     },
+];
+
+const DEMO_ROLES = [
+  { value: "manufacturer", label: "Manufacturer", icon: Factory,  path: "/dashboard/manufacturer" },
+  { value: "supplier",     label: "Supplier",     icon: Package,  path: "/dashboard/supplier"     },
+  { value: "distributor",  label: "Distributor",  icon: Truck,    path: "/dashboard/distributor"  },
+  { value: "retailer",     label: "Retailer",     icon: Store,    path: "/dashboard/retailer"     },
 ];
 
 export function LoginPage() {
@@ -22,6 +29,12 @@ export function LoginPage() {
   const triggerShake = () => {
     setShake(true);
     setTimeout(() => setShake(false), 300);
+  };
+
+  const handleDemoLogin = (demoRole: string, path: string) => {
+    localStorage.setItem("demo_mode", "true");
+    localStorage.setItem("user_role", demoRole === "manufacturer" ? "company" : demoRole);
+    navigate(path);
   };
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
@@ -169,6 +182,52 @@ export function LoginPage() {
               </div>
             )}
 
+          </div>
+        </div>
+
+        {/* Demo access section */}
+        <div
+          className="mt-4 rounded-[4px] overflow-hidden"
+          style={{
+            border: "1px solid rgba(255, 195, 0, 0.18)",
+            backgroundColor: "rgba(255, 195, 0, 0.02)",
+          }}
+        >
+          <div
+            className="flex items-center gap-2 px-4 py-3"
+            style={{ borderBottom: "1px solid rgba(255, 195, 0, 0.12)" }}
+          >
+            <Zap size={12} style={{ color: "rgba(255, 195, 0, 0.65)" }} />
+            <span
+              className="font-mono-ibm uppercase tracking-[0.12em]"
+              style={{ fontSize: "10px", color: "rgba(255, 195, 0, 0.65)" }}
+            >
+              Demo Mode — skip login
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-px" style={{ backgroundColor: "rgba(255, 195, 0, 0.06)" }}>
+            {DEMO_ROLES.map((d) => {
+              const Icon = d.icon;
+              return (
+                <button
+                  key={d.value}
+                  onClick={() => handleDemoLogin(d.value, d.path)}
+                  className="flex items-center gap-3 px-4 py-3 transition-colors duration-150 cursor-pointer text-left"
+                  style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-secondary)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(255, 195, 0, 0.04)";
+                    e.currentTarget.style.color = "rgba(255, 195, 0, 0.8)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--bg-surface)";
+                    e.currentTarget.style.color = "var(--text-secondary)";
+                  }}
+                >
+                  <Icon size={14} />
+                  <span className="font-mono-ibm" style={{ fontSize: "12px" }}>{d.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
