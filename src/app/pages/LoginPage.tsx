@@ -4,6 +4,7 @@ import { ScanLine } from "lucide-react";
 import { TCButton } from "../components/TCButton";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginWithGoogle } from "../lib/api";
+import { GOOGLE_CLIENT_ID, hasGoogleClientId } from "../lib/config";
 
 const ROLES = [
   { value: "company",     label: "Manufacturer" },
@@ -18,6 +19,7 @@ export function LoginPage() {
   const [error,   setError]   = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [shake,   setShake]   = useState<boolean>(false);
+  const googleClientConfigured = hasGoogleClientId();
 
   const triggerShake = () => {
     setShake(true);
@@ -151,13 +153,29 @@ export function LoginPage() {
             )}
 
             {/* Google login */}
-            {loading ? (
+            {!googleClientConfigured ? (
+              <div
+                className="p-3 rounded-[4px]"
+                style={{
+                  backgroundColor: "rgba(255, 183, 77, 0.08)",
+                  border: "1px solid rgba(255, 183, 77, 0.25)",
+                }}
+              >
+                <p
+                  className="font-mono-ibm"
+                  style={{ fontSize: "12px", color: "var(--text-primary)" }}
+                >
+                  Google sign-in is not configured. Set `VITE_GOOGLE_CLIENT_ID` to a valid Google Web OAuth client ID and restart the Vite server.
+                </p>
+              </div>
+            ) : loading ? (
               <TCButton variant="primary" fullWidth disabled>
                 Authenticating...
               </TCButton>
             ) : (
               <div className="flex justify-center">
                 <GoogleLogin
+                  key={GOOGLE_CLIENT_ID}
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
                   theme="filled_black"
