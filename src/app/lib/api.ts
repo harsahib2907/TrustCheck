@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+mport { API_BASE_URL } from "./config";
+
+const BASE_URL = API_BASE_URL;
 
 function getToken(): string | null {
   return localStorage.getItem("access_token");
