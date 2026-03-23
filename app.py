@@ -80,6 +80,7 @@ CORS_ALLOWED_ORIGINS = get_csv_env(
         "http://127.0.0.1:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5174",
+        "https://trust-check-delta.vercel.app",
     ],
 )
 CORS_ALLOWED_METHODS = get_csv_env("CORS_ALLOWED_METHODS", ["GET", "POST", "OPTIONS"])
